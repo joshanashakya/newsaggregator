@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,8 +28,10 @@ public class NewsCrawler implements Crawler {
 
 	@Override
 	public List<String> crawl() {
-		List<String> urls = initialize();
+		List<String> seed = initialize();
+		List<String> urls = new ArrayList<>();
 		List<String> visited = new ArrayList<>();
+		urls.addAll(seed);
 		int size = urls.size();
 		for (int i = 0; i < size; i++) {
 			String url = urls.get(i);
@@ -40,23 +44,26 @@ public class NewsCrawler implements Crawler {
 				LOGGER.log(Level.INFO, "Already visited.");
 				continue;
 			}
-			String content = FileReaderWriter.download(url, false);
+			String content = FileReaderWriter.download(url, false, null);
 			if (isEmpty(content)) {
 				LOGGER.log(Level.INFO, "The page is empty.");
 				continue;
 			}
 			// TODO index
 			urls.addAll(parse(url, content));
+			urls = removeDuplicate(urls);
 			size = urls.size();
+			System.out.println(size);
 			visited.add(url);
-			if (size >= limit)
+			if (size >= limit - seed.size())
 				break;
 		}
+		urls.removeAll(seed);
 		return urls;
 	}
 
 	List<String> initialize() {
-		return FileReaderWriter.read(seedFileName);
+		return FileReaderWriter.read(seedFileName, true);
 	}
 
 	boolean isHtml(String pageUrl) {
@@ -81,5 +88,10 @@ public class NewsCrawler implements Crawler {
 		System.out.println(source);
 		LinkParser parser = LinkParserFactory.get(source);
 		return parser.parse(url, content);
+	}
+
+	private List<String> removeDuplicate(List<String> urls) {
+		Set<String> set = new LinkedHashSet<>(urls);
+		return new ArrayList<>(set);
 	}
 }

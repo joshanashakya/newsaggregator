@@ -2,6 +2,7 @@ package edu.lab.newsaggregator.common;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,10 +11,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileReaderWriter {
+import edu.lab.newsaggregator.AppProperties;
 
-	public static List<String> read(String fileName) {
-		String path = getPath(fileName);
+public class FileReaderWriter {
+	
+	private static final AppProperties PROPERTIES = AppProperties.getInstance();
+
+	public static List<String> read(String filePath, boolean isInResource) {
+		String path = isInResource ? getPath(filePath) : filePath;
 		List<String> lines = new ArrayList<>();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(path));
@@ -28,7 +33,7 @@ public class FileReaderWriter {
 		return lines;
 	}
 
-	public static String download(String url, boolean doSave) {
+	public static String download(String url, boolean doSave, String fileName) {
 		StringBuilder sb = new StringBuilder();
 		String content = null;
 		try {
@@ -40,7 +45,7 @@ public class FileReaderWriter {
 			in.close();
 			content = sb.toString();
 			if (doSave) {
-				BufferedWriter out = new BufferedWriter(new FileWriter(downloadPath(url)));
+				BufferedWriter out = new BufferedWriter(new FileWriter(downloadPath(fileName)));
 				out.write(content);
 				out.close();
 			}
@@ -51,11 +56,43 @@ public class FileReaderWriter {
 		return content;
 	}
 
-	private static String getPath(String fileName) {
-		return FileReaderWriter.class.getClassLoader().getResource(fileName).getPath().replaceAll("%20", " ");
+	public static <T> void write(List<T> list, String path) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+			for (T l : list) {
+				writer.write(String.valueOf(l));
+				writer.newLine();
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static String read(File file) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(file));
+			String line;
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+			}
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
+	}
+
+	public static List<String> readFiles(String folderPath) {
+		return null;
+	}
+
+	private static String getPath(String filePath) {
+		return FileReaderWriter.class.getClassLoader().getResource(filePath).getPath().replaceAll("%20", " ");
 	}
 
 	private static String downloadPath(String fileName) {
-		return String.format("%s/download-%s", "downloads", fileName);
+		return String.format("%s/%s", PROPERTIES.get("pages"), fileName);
 	}
 }

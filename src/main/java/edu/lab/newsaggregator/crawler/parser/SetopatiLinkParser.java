@@ -16,7 +16,8 @@ public class SetopatiLinkParser extends LinkParser {
 		Matcher matcher = Pattern.compile(pattern).matcher(content);
 		while (matcher.find()) {
 			String link = matcher.group(2);
-			if (link.matches("https://www.setopati.com.*?\\d")) {
+//			https://www.setopati.com/author/128
+			if (link.matches("https://www.setopati.com.*?\\d") && !link.contains("author")) {
 				links.add(link);
 			}
 		}

@@ -18,6 +18,8 @@ repositories {
 }
 
 dependencies {
+	compile group: 'org.jsoup', name: 'jsoup', version: '1.12.1'
+	
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
