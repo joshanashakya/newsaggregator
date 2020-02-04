@@ -14,7 +14,7 @@ import java.util.List;
 import edu.lab.newsaggregator.AppProperties;
 
 public class FileReaderWriter {
-	
+
 	private static final AppProperties PROPERTIES = AppProperties.getInstance();
 
 	public static List<String> read(String filePath, boolean isInResource) {
@@ -76,6 +76,7 @@ public class FileReaderWriter {
 			String line;
 			while ((line = in.readLine()) != null) {
 				sb.append(line);
+				sb.append("\n");
 			}
 			in.close();
 		} catch (IOException e) {
@@ -84,8 +85,16 @@ public class FileReaderWriter {
 		return sb.toString();
 	}
 
-	public static List<String> readFiles(String folderPath) {
-		return null;
+	public static void delete(String path) {
+		File file = new File(path);
+		if (file.isDirectory()) {
+			File[] files = file.listFiles();
+			for (File f : files) {
+				delete(f.getPath());
+			}
+		} else {
+			file.delete();
+		}
 	}
 
 	private static String getPath(String filePath) {
