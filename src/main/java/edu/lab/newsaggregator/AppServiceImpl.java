@@ -20,6 +20,9 @@ import edu.lab.newsaggregator.news.NewsContent;
 import edu.lab.newsaggregator.news.extractor.NewsExtractor;
 import edu.lab.newsaggregator.news.extractor.NewsExtractorFactory;
 
+/**
+ * @author joshanashakya <Feb 4, 2020>
+ */
 public class AppServiceImpl implements AppService {
 
 	private static final Logger LOGGER = Logger.getLogger(AppService.class.getName());
@@ -70,6 +73,11 @@ public class AppServiceImpl implements AppService {
 		FileReaderWriter.delete(PROPERTIES.get("clusters.info"));
 	}
 
+	/**
+	 * Download page of each of the given url
+	 * 
+	 * @param urls the link of news
+	 */
 	private void download(List<String> urls) {
 		int count = 1;
 		for (String url : urls) {
@@ -80,6 +88,11 @@ public class AppServiceImpl implements AppService {
 		}
 	}
 
+	/**
+	 * Extracts the news content from downloaded pages. Extraction involves parsing
+	 * the HTML page to obtain news title and content. Each extracted content is
+	 * then stored in the file.
+	 */
 	private void extract() {
 		File folder = new File(PROPERTIES.get("pages"));
 		File[] files = folder.listFiles();
@@ -93,6 +106,11 @@ public class AppServiceImpl implements AppService {
 		}
 	}
 
+	/**
+	 * Reads and lists titles from extracted news content
+	 * 
+	 * @return collection of news titles
+	 */
 	private List<String> collectTitles() {
 		File folder = new File(PROPERTIES.get("news"));
 		File[] files = folder.listFiles();
@@ -104,6 +122,12 @@ public class AppServiceImpl implements AppService {
 		return titles;
 	}
 
+	/**
+	 * Prepares string representation of collection of clusters ready to output.
+	 * 
+	 * @param clusters collection of cluster
+	 * @return string representation of collection of cluster
+	 */
 	private String format(List<Cluster> clusters) {
 		StringBuilder sb = new StringBuilder();
 		for (Cluster cluster : clusters) {
@@ -121,6 +145,12 @@ public class AppServiceImpl implements AppService {
 		return sb.toString();
 	}
 
+	/**
+	 * Outputs the content in console.
+	 * 
+	 * @param title the title
+	 * @param list  the data to print in console
+	 */
 	private void consoleOutput(String title, List<String> list) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n");
@@ -135,6 +165,12 @@ public class AppServiceImpl implements AppService {
 		System.out.println(sb.toString());
 	}
 
+	/**
+	 * Creates folder for each cluster and stores documents associated with the
+	 * cluster.
+	 * 
+	 * @param clusters
+	 */
 	private void createFolder(List<Cluster> clusters) {
 		String newsPath = PROPERTIES.get("news");
 		String clusterPath = PROPERTIES.get("clusters");

@@ -7,12 +7,27 @@ import java.util.logging.Logger;
 
 import edu.lab.newsaggregator.cluster.document.Document;
 
+/**
+ * @author Joshana Shakya
+ */
 public class KMeans {
 
 	private static final Logger LOGGER = Logger.getLogger(KMeans.class.getName());
 
-	public List<Cluster> cluster(List<Document> docs, int num) {
-		List<Cluster> clusters = initialize(docs, num);
+	/**
+	 * Initializes 'k' clusters by selecting first 'k' documents as centroids. Makes
+	 * deep copy of clusters. For each document, finds the nearest cluster of the
+	 * document, removes the document from all clusters, and assigns this document
+	 * to the chosen cluster. Calculates centroid of each of the clusters. Compares
+	 * the newly updated clusters with the old copy of clusters for equality. If the
+	 * two copies are same, the updated clusters is the final clusters.
+	 * 
+	 * @param docs documents to be clustered
+	 * @param k    number of clusters
+	 * @return clusters
+	 */
+	public List<Cluster> cluster(List<Document> docs, int k) {
+		List<Cluster> clusters = initialize(docs, k);
 		int count = 1;
 		while (true) {
 			LOGGER.log(Level.INFO, "Iteration: " + count);
@@ -36,6 +51,12 @@ public class KMeans {
 		return clusters;
 	}
 
+	/**
+	 * Makes deep copy of the collection of cluster.
+	 * 
+	 * @param clusters
+	 * @return copy of clusters
+	 */
 	private List<Cluster> copyCluster(List<Cluster> clusters) {
 		List<Cluster> copy = new ArrayList<>();
 		for (Cluster cluster : clusters) {
@@ -48,6 +69,12 @@ public class KMeans {
 		return copy;
 	}
 
+	/**
+	 * Removes document from the clusters
+	 * 
+	 * @param doc
+	 * @param clusters
+	 */
 	private void removeDoc(Document doc, List<Cluster> clusters) {
 		for (Cluster cluster : clusters) {
 			if (cluster.getDocs().contains(doc))
@@ -55,6 +82,13 @@ public class KMeans {
 		}
 	}
 
+	/**
+	 * Check if two collection of cluster are same
+	 * 
+	 * @param clusters
+	 * @param prevClusters
+	 * @return true if the two collection of cluster are same, false otherwise
+	 */
 	private boolean conditionMet(List<Cluster> clusters, List<Cluster> prevClusters) {
 		boolean flag = true;
 		for (int i = 0; i < clusters.size(); i++) {
@@ -64,6 +98,13 @@ public class KMeans {
 		return flag;
 	}
 
+	/**
+	 * doc1 = <1, 1, 2> and doc2 = <2, 3, 4> then centroid = <(1+1)/2, (1+3)/2,
+	 * (2+4)/2>
+	 * 
+	 * @param cluster
+	 * @return centroid of the cluster
+	 */
 	private List<Double> calCentroid(Cluster cluster) {
 		List<Document> docs = cluster.getDocs();
 		List<Double> temp = new ArrayList<>();
@@ -100,6 +141,13 @@ public class KMeans {
 		return clusters;
 	}
 
+	/**
+	 * Finds the nearest cluster of the document.
+	 * 
+	 * @param doc
+	 * @param clusters
+	 * @return the nearest cluster
+	 */
 	private Cluster findCluster(Document doc, List<Cluster> clusters) {
 		double maxSimilarity = 0.0;
 		Cluster bestCluster = clusters.get(0);

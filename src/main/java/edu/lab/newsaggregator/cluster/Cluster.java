@@ -6,6 +6,12 @@ import java.util.List;
 
 import edu.lab.newsaggregator.cluster.document.Document;
 
+/**
+ * Represents a single cluster of clustering algorithm. Implements Cloneable and
+ * has clone method for deep cloning. Overrides equals and hashcode.
+ * 
+ * @author joshanashakya <Feb 4, 2020>
+ */
 public class Cluster implements Cloneable {
 
 	private String id;

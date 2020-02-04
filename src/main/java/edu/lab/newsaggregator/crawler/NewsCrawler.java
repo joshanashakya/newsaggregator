@@ -35,6 +35,7 @@ public class NewsCrawler implements Crawler {
 		int size = urls.size();
 		for (int i = 0; i < size; i++) {
 			String url = urls.get(i);
+			visited.add(url);
 			LOGGER.info("Crawling " + url);
 			if (!isHtml(url)) {
 				LOGGER.log(Level.INFO, "Not an HTML page.");
@@ -53,7 +54,6 @@ public class NewsCrawler implements Crawler {
 			urls.addAll(parse(url, content));
 			urls = removeDuplicate(urls);
 			size = urls.size();
-			visited.add(url);
 			if (size >= limit - seed.size())
 				break;
 		}
