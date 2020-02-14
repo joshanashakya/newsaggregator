@@ -31,9 +31,10 @@ public class AppServiceImpl implements AppService {
 	@Override
 	public void listUrls(int num) {
 		Crawler crawler = new NewsCrawler(PROPERTIES.get("seed"), num);
-		List<String> urls = crawler.crawl().subList(0, num);
-		FileReaderWriter.write(urls, PROPERTIES.get("urls"));
-		consoleOutput("LIST OF URLS", urls);
+		List<String> urls = crawler.crawl();
+		List<String> urlSubList = urls.size() > num ? urls.subList(0, num - 1) : urls;
+		FileReaderWriter.write(urlSubList, PROPERTIES.get("urls"));
+		consoleOutput("LIST OF URLS", urlSubList);
 	}
 
 	@Override
