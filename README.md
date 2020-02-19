@@ -1,0 +1,3 @@
+- Implements spidering algorithm to collect news urls  
+- Extracts news title and text content from the collected urls
+- Clusters news using KMeans clustering algorithm 
